@@ -1,0 +1,7 @@
+---
+
+n_sims: [10, 100, 1000, 10000]
+task: 'two_moons'
+methods: [NLE, "EnsembleNLE"]
+n_repeats: 5
+n_evals: 10

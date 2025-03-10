@@ -1,0 +1,11 @@
+---
+
+n_sims: [100]
+task: 'two_moons'
+methods: ["BALD_NLE"]
+n_repeats: 2
+n_evals: 2
+n_sims_init: 20
+n_sims_active: 80
+theta_pool_size: 250
+n_ensemble_members: 3
