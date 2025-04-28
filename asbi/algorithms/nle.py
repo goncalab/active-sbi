@@ -55,6 +55,10 @@ def run_bald_NLE(simulator,
     # the rest of the simulations will be used for active learning
     for i in range(n_sims_active):
         theta_pool = prior((theta_pool_size,))
+        # refactor to produce probes_N_K_C matrix where :
+        #   N = number of x values, 
+        #   K = number of ensemble members
+        #   number of  
         theta_star, _ = bald_acq_func(ensemble, theta_pool, k=1)
         x_star = simulator(theta_star)
         for inference in ensemble:
@@ -67,3 +71,10 @@ def run_bald_NLE(simulator,
     
     print('done!')
     return ensemble_posterior
+
+def run_batch_bald_NLE(simulator, prior, n_sims_init, n_sims_active, theta_pool_size, n_ensemble_members, density_estimator="maf"):
+    """
+    """
+    #TODO: 
+    pass
+

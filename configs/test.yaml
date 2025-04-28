@@ -1,6 +1,6 @@
 ---
 
-n_sims: [10, 100]
+n_sims: [10, 25, 50, 75, 100]
 task: 'two_moons'
 methods: ["NLE"]
 n_repeats: 2

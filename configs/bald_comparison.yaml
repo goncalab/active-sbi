@@ -1,11 +1,10 @@
 ---
 
-n_sims: [100]
+n_sims: [10, 25, 50, 75, 100]
 task: 'two_moons'
-methods: ["BALD_NLE", "Ensemble_NLE", "NLE"]
-n_repeats: 3
+methods: ["BALD_NLE", "NLE"]
+n_repeats: 10
 n_evals: 10
-n_sims_init: 20
-n_sims_active: 80
+pct_active: .5
 theta_pool_size: 250
-n_ensemble_members: 3
+n_ensemble_members: 4

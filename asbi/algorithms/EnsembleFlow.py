@@ -27,11 +27,21 @@ class EnsembleFlow:
             return th.cat(samples, dim=0)
     
     def compute_marginal_entropy(self, theta, N=1000):
+        """
+            Compute the marginal entropy of the (ensemble) predictive distribution
+                H[ E(q(x|theta, D)) ] = - E_{x~q(x|theta)}[log q(x|theta)]
+            where q is the ensemble predictive distribution (average of the flows)
+        """
         # compute entropy of the marginal predictive
         samples = self.sample(N, theta)
         return - th.mean(self.log_prob(samples, theta))
     
     def compute_ensemble_entropy(self, theta, N=1000):
+        """
+            Compute the average entropy of each flow in the ensemble
+                E[ H(q(x|theta, D)) ] = 1/M * sum_{m=1}^M H(q_m(x|theta, D))
+            where M is the number of flows in the ensemble and q_m is the m-th flow
+        """
         # compute average entropy of the ensemble
         with th.no_grad():
             entropies = []
@@ -41,8 +51,14 @@ class EnsembleFlow:
             return th.mean(th.stack(entropies, dim=0))
 
     def compute_bald_score(self, theta, N=1000):
+        """
+            Compute BatchBALD score: H[x | theta, D] - E[H[x | theta, phi]]
+        """
         # entropy of marginal predictive + average entropy of the ensemble
         marginal_entropy = self.compute_marginal_entropy(theta, N)
         ensemble_entropy = self.compute_ensemble_entropy(theta, N)
         bald_score = ensemble_entropy - marginal_entropy
         return bald_score
+    
+    def compute_batch_bald_score(self, theta, N=1000):
+        pass

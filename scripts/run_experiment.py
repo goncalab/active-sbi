@@ -12,9 +12,10 @@ from sbibm.metrics import c2st
 import matplotlib.pyplot as plt
 import datetime
 import pickle as pk
+from pprint import pprint
 from plotting import plot_results
 
-class Runner:
+class Runner: 
     def __init__(self, config: Dict[str, Any], exp_name: str) -> None:
         self.config = config
         # get task, simulator, and prior
@@ -89,18 +90,21 @@ class Runner:
             except KeyError:
                 print('n_ensemble_members not found in config. Using default value of 3')
                 n_ensemble_members = 3
-                
             posterior = run_ensemble_NLE(self.simulator, self.prior, n_sims, n_ensemble_members=n_ensemble_members)
 
         elif method == 'BALD_NLE':
             try:
-                n_sims_init = self.config['n_sims_init']
-                n_sims_active = self.config['n_sims_active']
+                pct_active = self.config['pct_active']
+                n_sims_active = int(n_sims * pct_active)
+                n_sims_init = n_sims - n_sims_active
+                #n_sims_active = self.config['n_sims_active']
                 theta_pool_size = self.config['theta_pool_size']
                 n_ensemble_members = self.config['n_ensemble_members']
             except KeyError:
                 print('missing parameters for BALD_NLE in config')
                 sys.exit(1)
+            print("running BALD NLE...")
+            print(f"n_sims_init: {n_sims_init}, n_sims_active: {n_sims_active}")
             posterior = run_bald_NLE(self.simulator, self.prior, n_sims_init, n_sims_active, theta_pool_size, n_ensemble_members)
 
         else:
@@ -120,7 +124,6 @@ class Runner:
 
 
 def load_config(config_path: str) -> Dict[str, Any]:
-
     """
      Load and parse the YAML configuration file
     """
@@ -147,7 +150,8 @@ def main():
     # load configuration
     print('loading config...')
     config = load_config(f"../configs/{args.config}.yaml")
-    print(f'config: \n{config}')
+    print(f'config:')
+    pprint(config)
     
     # initialize and run the program
     print('initializing runner...')
