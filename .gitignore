@@ -4,3 +4,6 @@
 */.DS_Store
 results/*
 */sbi-logs
+*.pyc 
+poetry.lock
+*.egg-info
