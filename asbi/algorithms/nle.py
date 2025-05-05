@@ -4,11 +4,14 @@ from sbi.inference import NLE
 from sbi.inference import EnsemblePosterior
 from asbi.algorithms.acquisitions import bald_acq_func
 
-def run_NLE(simulator, prior, n_sims, density_estimator="maf"):
+def run_NLE(simulator, prior, n_sims, density_estimator="maf", device=None):
     """
      Runs neural likelihood estimation 
      for now, we generate the data from the simulator inside the function 
     """
+    if device is None:
+        device = th.device("cuda" if th.cuda.is_available() else "cpu")
+
     inference = NLE(prior, density_estimator=density_estimator)
     theta = prior((n_sims,))
     x = simulator(theta)
@@ -17,11 +20,14 @@ def run_NLE(simulator, prior, n_sims, density_estimator="maf"):
 
     return posterior
 
-def run_ensemble_NLE(simulator, prior, n_sims, n_ensemble_members=3, density_estimator="maf"):
+def run_ensemble_NLE(simulator, prior, n_sims, n_ensemble_members=3, density_estimator="maf", device=None):
     """
      Runs neural likelihood estimation 
      for now, we generate the data from the simulator inside the function 
     """
+    if device is None:
+        device = th.device("cuda" if th.cuda.is_available() else "cpu")
+
     ensemble = [NLE(prior, density_estimator=density_estimator) for _ in range(n_ensemble_members)]
     theta = prior((n_sims,))
     x = simulator(theta)
@@ -39,8 +45,12 @@ def run_bald_NLE(simulator,
                  n_sims_active,
                  theta_pool_size,
                  n_ensemble_members, 
-                 density_estimator="maf"):
-    
+                 density_estimator="maf", 
+                 device=None):
+
+    if device is None:
+        device = th.device("cuda" if th.cuda.is_available() else "cpu")
+
     # intialize ensemble
     ensemble = [NLE(prior, density_estimator=density_estimator) for _ in range(n_ensemble_members)]
 
@@ -54,11 +64,7 @@ def run_bald_NLE(simulator,
     
     # the rest of the simulations will be used for active learning
     for i in range(n_sims_active):
-        theta_pool = prior((theta_pool_size,))
-        # refactor to produce probes_N_K_C matrix where :
-        #   N = number of x values, 
-        #   K = number of ensemble members
-        #   number of  
+        theta_pool = prior((theta_pool_size,)) 
         theta_star, _ = bald_acq_func(ensemble, theta_pool, k=1)
         x_star = simulator(theta_star)
         for inference in ensemble:
@@ -73,8 +79,5 @@ def run_bald_NLE(simulator,
     return ensemble_posterior
 
 def run_batch_bald_NLE(simulator, prior, n_sims_init, n_sims_active, theta_pool_size, n_ensemble_members, density_estimator="maf"):
-    """
-    """
-    #TODO: 
     pass
 

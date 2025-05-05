@@ -1,5 +1,6 @@
 import sys
 import yaml
+import torch as th
 from typing import Dict, Any
 
 def load_config(config_path: str) -> Dict[str, Any]:
@@ -19,3 +20,12 @@ def load_config(config_path: str) -> Dict[str, Any]:
         print(f"Unexpected error reading config file: {e}")
         sys.exit(1)
 
+def get_device():
+    """Get the device to use for training."""
+    if th.cuda.is_available():
+        device = th.device("cuda")
+        print(f"Using GPU: {th.cuda.get_device_name(0)}")
+    else:
+        device = th.device("cpu")
+        print("No GPU available, using CPU")
+    return device

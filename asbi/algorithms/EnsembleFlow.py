@@ -1,6 +1,5 @@
 import torch as th 
 
-
 class EnsembleFlow:
     def __init__(self, flows) -> None:
         self.n_flows = len(flows)
